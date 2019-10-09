@@ -2,24 +2,15 @@ import "./styles.css"
 
 import * as d3 from "d3"
 
-const data = [
-  { id: 0, x: 100, y: 300 },
-  { id: 1, x: 300, y: 100 },
-  { id: 2, x: 200, y: 200 },
-  { id: 3, x: 150, y: 320 },
-  { id: 4, x: 60, y: 120 }
-]
-
-
-const update = (data, fancyEntry = false) => {
-  console.log('update:', data.map(({x, y}) => `(${x}, ${y})`).join(' '))
+const update = (dataset, fancyEntry = false) => {
+  console.log('update:', dataset.map(({x, y}) => `(${x}, ${y})`).join(' '))
 
   // DATA JOIN
   const svg = d3.select("#vis-svg")
     .selectAll("circle")
-    .data(data, ({id}) => id)
+    .data(dataset, ({id}) => id)
 
-  // ENTER - New circles for new data
+  // ENTER - New circles for new data points
   svg.enter().append("circle")
     .attr("stroke", "orange")
     .attr("stroke-width", 3)
@@ -57,14 +48,33 @@ const update = (data, fancyEntry = false) => {
     .remove()
 }
 
-update(data)
 
-setTimeout(() => {
-  data.splice(Math.floor(Math.random() * data.length), 1)
-  update(data, true)
-  let rand = () => Math.floor(50 - 100 * Math.random())
-  data.forEach(p => { p.x += rand(); p.y += rand() })
-  data.push({ id: 5, x: 400, y: 400 })
-  update(data, true)
-}, 1000)
+// Play with my update function
+{
+  const dataset = [
+    { id: 0, x: 100, y: 300 },
+    { id: 1, x: 300, y: 100 },
+    { id: 2, x: 200, y: 200 },
+    { id: 3, x: 150, y: 320 },
+    { id: 4, x: 60, y: 120 }
+  ]
+
+  update(dataset)
+
+  setTimeout(() => {
+    // Delete a circle
+    dataset.splice(Math.floor(Math.random() * dataset.length), 1)
+    update(dataset, true)
+
+    // Randomly nudge remaining circles
+    let rand = () => Math.floor(50 - 100 * Math.random())
+    dataset.forEach(p => { p.x += rand(); p.y += rand() })
+
+    // Create a new circle
+    dataset.push({ id: 5, x: 400, y: 400 })
+    update(dataset, true)
+  }, 1000)
+}
+
+
 
